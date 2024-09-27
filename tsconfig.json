@@ -6,8 +6,9 @@
     ],
     "module": "commonjs",
     "moduleResolution": "node",
+    "skipLibCheck": true,
     "typeRoots": [
-      "./src/@types"
+     "./node_modules/@types"      
     ],
     "resolveJsonModule": true,
     "allowJs": true,
@@ -15,7 +16,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "noImplicitAny": true,
+    "noImplicitAny": true
   },
   "include": [
     "src/**/*"
