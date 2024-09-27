@@ -10,11 +10,11 @@ type Erro = {
 export const listarCarros = async (req: Request, res: Response)=>{
     try {
         const carros = await knex<Carro>('carros')
-         res.json(carros)
+         return res.json(carros)
     } catch (error) {
         const erro = error as Erro
         
-         res.status(500).json({mensagem: erro.message})
+        return res.status(500).json({mensagem: erro.message})
     }
 }
 export async function detalharCarros (req: Request, res: Response){
@@ -23,10 +23,10 @@ export async function detalharCarros (req: Request, res: Response){
         const carro = await knex('carros').where({id: Number(id)}).first();
 
         if (!carro) {
-             res.status(404).json({mensagem: 'Carro não encontrado'})
+            return  res.status(404).json({mensagem: 'Carro não encontrado'})
         }
 
-         res.status(200).json(carro)
+        return res.status(200).json(carro)
 
         
     } catch (error) {
@@ -36,7 +36,7 @@ export async function detalharCarros (req: Request, res: Response){
     }
     
 }
-export const cadastrarCarros = async (req: Request, res: Response):Promise<Response>=>{
+export const cadastrarCarros = async (req: Request, res: Response)=>{
         const {marca, modelo, ano, cor, valor} = req.body;
 
         try {
