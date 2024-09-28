@@ -62,8 +62,11 @@ export const atualizarCarros = async (req: express.Request, res: express.Respons
     const id = req.params.id
     try {
         const atualizacao = await knex('carros').update({marca, modelo, ano, cor, valor}).where('id', id).returning('*');
+
+
         
-        if (!atualizacao) {
+        
+        if (atualizacao.length<1) {
             return  res.status(404).json({mensagem: 'Carro não encontrado'})
         }
 
@@ -85,6 +88,10 @@ export const excluirCarros = async (req: express.Request, res: express.Response)
     const id = req.params.id;
     try {
         const excluir = await knex('carros').del().where('id',id).returning('*')
+
+        if (excluir.length<1) {
+            return  res.status(404).json({mensagem: 'Carro não encontrado'})
+        }
         return res.json(excluir)
         
     } catch (error) {
