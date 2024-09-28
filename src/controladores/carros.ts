@@ -1,4 +1,4 @@
-import {Request, Response} from 'express';
+import express from 'express';
 import {knex} from '../bancoDeDados/conexao';
 import {Carro} from '../tipos'
 
@@ -7,7 +7,7 @@ type Erro = {
 }
 
 
-export const listarCarros = async (req: Request, res: Response)=>{
+export const listarCarros = async (req: express.Request, res: express.Response)=>{
     try {
         const carros = await knex<Carro>('carros')
          return res.json(carros)
@@ -17,10 +17,10 @@ export const listarCarros = async (req: Request, res: Response)=>{
         return res.status(500).json({mensagem: erro.message})
     }
 }
-export async function detalharCarros (req: Request, res: Response){
+export async function detalharCarros (req: express.Request, res: express.Response){
         const id = req.params.id
     try {
-        const carro = await knex('carros').where({id: Number(id)}).first();
+        const carro = await knex<Carro>('carros').where({id: Number(id)}).first();
 
         if (!carro) {
             return  res.status(404).json({mensagem: 'Carro não encontrado'})
@@ -36,7 +36,7 @@ export async function detalharCarros (req: Request, res: Response){
     }
     
 }
-export const cadastrarCarros = async (req: Request, res: Response)=>{
+export const cadastrarCarros = async (req: express.Request, res: express.Response)=>{
         const {marca, modelo, ano, cor, valor} = req.body;
 
         try {
@@ -57,10 +57,42 @@ export const cadastrarCarros = async (req: Request, res: Response)=>{
 
 
 }
-export const atualizarCarros = async (req: Request, res: Response)=>{
+export const atualizarCarros = async (req: express.Request, res: express.Response)=>{
+    const {marca, modelo, ano, cor, valor} = req.body;
+    const id = req.params.id
+    try {
+        const atualizacao = await knex('carros').update({marca, modelo, ano, cor, valor}).where('id', id).returning('*');
+        
+        if (!atualizacao) {
+            return  res.status(404).json({mensagem: 'Carro não encontrado'})
+        }
+
+        return res.json(atualizacao[0])
+
+
+
+
+    } catch (error) {
+        const erro = error as Erro
+        
+        return res.status(500).json({mensagem: erro.message})
+    }
+
     
 }
-export const excluirCarros = async (req: Request, res: Response)=>{
+export const excluirCarros = async (req: express.Request, res: express.Response)=>{
+
+    const id = req.params.id;
+    try {
+        const excluir = await knex('carros').del().where('id',id).returning('*')
+        return res.json(excluir)
+        
+    } catch (error) {
+        const erro = error as Erro
+        
+        return res.status(500).json({mensagem: erro.message})
+    }
+
     
 }
 
